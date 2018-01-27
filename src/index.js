@@ -297,7 +297,7 @@ class Boxes {
     return this._c.put(aeu `boxes/${key}/comments`, {message});
   }
   getMeetings(key: string) {
-    return this._c.get(aeu `boxes/${key}/meetings`);
+    return this._c.get(aeu `boxes/${key}/meetings`).then(data => data.results);
   }
   getFiles(key: string) {
     return this._c.get(aeu `boxes/${key}/files`);
