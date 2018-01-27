@@ -16,8 +16,8 @@ class ConnHelper {
     // By default we request the V1 of the API
     let prefix = '/api/v1/';
 
-    // If the requested resource is a Task, then use the V2 of the API
-    if (path.indexOf('tasks') > -1) prefix = '/api/v2';
+    // If the requested resource is a Task or a Meeting, then use the V2 of the API
+    if (path.indexOf('tasks') > -1 || path.indexOf('meetings') > -1) prefix = '/api/v2/';
 
     return {
       method, headers, encoding,
@@ -295,6 +295,9 @@ class Boxes {
   }
   postComment(key: string, message: string) {
     return this._c.put(aeu `boxes/${key}/comments`, {message});
+  }
+  getMeetings(key: string) {
+    return this._c.get(aeu `boxes/${key}/meetings`);
   }
   getFiles(key: string) {
     return this._c.get(aeu `boxes/${key}/files`);
