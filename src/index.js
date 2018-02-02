@@ -203,6 +203,13 @@ class Pipelines {
     }
     return this._c.get(aeu `pipelines/${key}/newsfeed` + qs);
   }
+  getFeedAll(detailLevel: ?string) {
+    let qs = '';
+    if (detailLevel) {
+      qs += '?' + querystring.stringify({detailLevel});
+    }
+    return this._c.get(aeu `newsfeed` + qs);
+  }
 }
 
 class PipelineStages {
