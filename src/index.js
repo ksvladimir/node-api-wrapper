@@ -17,7 +17,7 @@ class ConnHelper {
     let prefix = '/api/v1/';
 
     // If the requested resource is a Task or a Meeting, then use the V2 of the API
-    if (path.indexOf('tasks') > -1 || path.indexOf('meetings') > -1) prefix = '/api/v2/';
+    if (path.match(/tasks|meetings|webhooks/)) prefix = '/api/v2/';
 
     return {
       method, headers, encoding,
@@ -392,6 +392,36 @@ class Tasks {
   }
 }
 
+class Webhooks {
+  _s: Streak;
+  _c: ConnHelper;
+  constructor(s: Streak, c: ConnHelper) {
+    this._s = s;
+    this._c = c;
+  }
+  getForPipeline(pipelineKey: string) {
+    return this._c.get(aeu `pipelines/${pipelineKey}/webhooks`).then(data => data.results);
+  }
+  getForTeam(teamKey: string) {
+    return this._c.get(aeu `teams/${teamKey}/webhooks`).then(data => data.results);
+  }
+  getOne(key: string) {
+    return this._c.get(aeu `webhooks/${key}`);
+  }
+  createForPipeline(pipelineKey: string, data: Object) {
+    return this._c.post(aeu `webhooks?pipelineKey=${pipelineKey}`, data);
+  }
+  createForTeam(teamKey: string, data: Object) {
+    return this._c.post(aeu `webhooks?teamKey=${teamKey}`, data);
+  }
+  update(key: string, data: Object) {
+    return this._c.post(aeu `webhooks/${key}`, data);
+  }
+  delete(key: string) {
+    return this._c.delete(aeu `webhooks/${key}`);
+  }
+}
+
 export class Streak {
   _c: ConnHelper;
   Me: Me;
@@ -400,6 +430,7 @@ export class Streak {
   Files: Files;
   Threads: Threads;
   Tasks: Tasks;
+  Webhooks: Webhooks;
 
   constructor(authKey: string) {
     this._c = new ConnHelper(authKey);
@@ -409,6 +440,7 @@ export class Streak {
     this.Files = new Files(this, this._c);
     this.Threads = new Threads(this, this._c);
     this.Tasks = new Tasks(this, this._c);
+    this.Webhooks = new Webhooks(this, this._c);
   }
 
   search(query: string): Promise<Object> {
